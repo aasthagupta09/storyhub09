@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head(${story.title})}"></head>
+<body>
+<header th:replace="~{fragments :: nav}"></header>
+<main class="reader">
+  <span class="tag" th:text="${story.category}">Genre</span>
+  <h1 style="margin-top:14px" th:text="${story.title}">Title</h1>
+  <p class="byline">
+    By <strong th:text="${story.author.username}">author</strong> ·
+    <span th:text="${#temporals.format(story.createdAt,'dd MMM yyyy')}">date</span> ·
+    <span th:text="${story.readingMinutes}">1</span> min read ·
+    <span th:text="${avgRating}">0</span> ★ (<span th:text="${ratingCount}">0</span>)
+  </p>
+
+  <div class="actions">
+    <form th:action="@{/stories/{id}/like(id=${story.id})}" method="post">
+      <button class="btn ghost" th:classappend="${liked} ? 'active'">♥ <span th:text="${likeCount}">0</span> <span th:text="${liked} ? 'Liked' : 'Like'">Like</span></button>
+    </form>
+    <form th:action="@{/stories/{id}/favorite(id=${story.id})}" method="post">
+      <button class="btn ghost" th:classappend="${favorited} ? 'active'" th:text="${favorited} ? 'Bookmarked' : 'Bookmark'">Bookmark</button>
+    </form>
+    <th:block th:if="${currentUser != null and currentUser.id == story.author.id}">
+      <a class="btn ghost" th:href="@{/stories/{id}/edit(id=${story.id})}">Edit</a>
+      <form th:action="@{/stories/{id}/delete(id=${story.id})}" method="post" onsubmit="return confirm('Delete this story for good?')">
+        <button class="btn danger">Delete</button>
+      </form>
+    </th:block>
+  </div>
+
+  <!-- Raw text is stored here (hidden); app.js turns it into formatted paragraphs -->
+  <div id="rawContent" hidden th:text="${story.content}"></div>
+  <article id="storyBody" class="story-text"></article>
+
+  <section class="engage">
+    <h3 th:text="${myRating > 0} ? 'Your rating' : 'Rate this story'">Rate this story</h3>
+    <form th:action="@{/stories/{id}/rate(id=${story.id})}" method="post" class="stars">
+      <button th:each="i : ${#numbers.sequence(1,5)}" class="star" th:classappend="${myRating >= i} ? 'on'"
+              name="stars" th:value="${i}" th:attr="aria-label=${i} + ' stars'">★</button>
+    </form>
+  </section>
+
+  <section id="comments" style="margin-top:48px">
+    <h2><span th:text="${#lists.size(comments)}">0</span> comments</h2>
+    <form th:if="${currentUser != null}" th:action="@{/stories/{id}/comment(id=${story.id})}" method="post">
+      <textarea name="text" rows="3" maxlength="1000" placeholder="What did you think?" required></textarea>
+      <button class="btn" style="margin-top:10px">Post comment</button>
+    </form>
+    <p th:if="${currentUser == null}"><a th:href="@{/login}">Log in</a> to comment, like or rate.</p>
+    <div class="comment" th:each="c : ${comments}">
+      <strong th:text="${c.user.username}">user</strong>
+      <span class="meta" th:text="${#temporals.format(c.createdAt,'dd MMM yyyy')}">date</span>
+      <p th:text="${c.text}">comment</p>
+    </div>
+  </section>
+</main>
+<footer th:replace="~{fragments :: footer}"></footer>
+</body>
+</html>

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Profile')}"></head>
+<body>
+<header th:replace="~{fragments :: nav}"></header>
+<main class="container">
+  <div class="form-page" style="padding-bottom:0">
+    <h1 th:text="${currentUser.username}">username</h1>
+    <div class="ok" th:if="${param.saved}">Profile saved.</div>
+    <div class="error" th:if="${error}" th:text="${error}"></div>
+    <form th:action="@{/profile}" method="post">
+      <label for="email">Email</label>
+      <input id="email" type="email" name="email" th:value="${currentUser.email}" required>
+      <label for="bio">Bio</label>
+      <textarea id="bio" name="bio" rows="3" maxlength="500" th:text="${currentUser.bio}"></textarea>
+      <label for="newPassword">New password (leave blank to keep current)</label>
+      <input id="newPassword" type="password" name="newPassword" minlength="6">
+      <p><button class="btn" style="margin-top:20px">Save profile</button></p>
+    </form>
+  </div>
+
+  <h2 class="section-title">Your stories</h2>
+  <div class="grid">
+    <th:block th:each="s : ${myStories}"><th:block th:replace="~{fragments :: card(${s})}"></th:block></th:block>
+  </div>
+  <p class="empty" th:if="${#lists.isEmpty(myStories)}">You have not published anything yet. <a th:href="@{/stories/new}">Write your first story</a>.</p>
+</main>
+<footer th:replace="~{fragments :: footer}"></footer>
+</body>
+</html>

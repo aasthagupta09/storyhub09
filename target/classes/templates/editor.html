@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<!-- Used for both "write new story" and "edit story" -->
+<head th:replace="~{fragments :: head('Write')}"></head>
+<body>
+<header th:replace="~{fragments :: nav}"></header>
+<main class="form-page">
+  <h1 th:text="${story.id == null} ? 'Write a story' : 'Edit your story'">Write a story</h1>
+  <div class="error" th:if="${error}" th:text="${error}"></div>
+
+  <form th:action="@{${action}}" method="post">
+    <label for="title">Title</label>
+    <input id="title" type="text" name="title" maxlength="150" th:value="${story.title}" required>
+
+    <label for="category">Genre</label>
+    <select id="category" name="category">
+      <option th:each="c : ${categories}" th:value="${c}" th:text="${c}" th:selected="${c == story.category}"></option>
+    </select>
+
+    <label for="content">Your story</label>
+    <div class="toolbar">
+      <button type="button" data-wrap="**|**">Bold</button>
+      <button type="button" data-wrap="*|*">Italic</button>
+      <button type="button" data-wrap="# |">Heading</button>
+      <button type="button" id="previewBtn">Preview</button>
+    </div>
+    <textarea id="content" name="content" rows="18" required th:text="${story.content}"></textarea>
+    <div class="meta" id="wordCount">0 words</div>
+    <div id="preview" class="preview story-text"></div>
+
+    <p style="margin-top:24px">
+      <button class="btn" th:text="${story.id == null} ? 'Publish story' : 'Save changes'">Publish story</button>
+      <a class="btn ghost" th:href="@{/}">Cancel</a>
+    </p>
+  </form>
+</main>
+<footer th:replace="~{fragments :: footer}"></footer>
+</body>
+</html>

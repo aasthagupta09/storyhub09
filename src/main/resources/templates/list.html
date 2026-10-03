@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<!-- One template for category pages, search results and bookmarks -->
+<head th:replace="~{fragments :: head(${heading})}"></head>
+<body>
+<header th:replace="~{fragments :: nav}"></header>
+<main class="container">
+  <h1 class="section-title" th:text="${heading}">Heading</h1>
+  <div class="chips">
+    <a class="chip" th:each="c : ${categories}" th:href="@{/category/{c}(c=${c})}" th:text="${c}">Genre</a>
+  </div>
+  <div class="grid" style="margin-top:24px">
+    <th:block th:each="s : ${stories}"><th:block th:replace="~{fragments :: card(${s})}"></th:block></th:block>
+  </div>
+  <p class="empty" th:if="${#lists.isEmpty(stories)}">Nothing here yet. Try another genre or search term.</p>
+</main>
+<footer th:replace="~{fragments :: footer}"></footer>
+</body>
+</html>

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Home')}"></head>
+<body>
+<header th:replace="~{fragments :: nav}"></header>
+<main class="container">
+  <section class="hero">
+    <h1>Stories worth staying up for.</h1>
+    <p>Read something new tonight, or publish the one you have been carrying around.</p>
+    <div class="chips">
+      <a class="chip" th:each="c : ${categories}" th:href="@{/category/{c}(c=${c})}" th:text="${c}">Genre</a>
+    </div>
+  </section>
+
+  <h2 class="section-title">Most loved</h2>
+  <div class="grid">
+    <th:block th:each="s : ${featured}"><th:block th:replace="~{fragments :: card(${s})}"></th:block></th:block>
+  </div>
+
+  <h2 class="section-title">Latest stories</h2>
+  <div class="grid">
+    <th:block th:each="s : ${latest}"><th:block th:replace="~{fragments :: card(${s})}"></th:block></th:block>
+  </div>
+  <p class="empty" th:if="${#lists.isEmpty(latest)}">No stories yet. Be the first to write one.</p>
+</main>
+<footer th:replace="~{fragments :: footer}"></footer>
+</body>
+</html>
